@@ -4,10 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Pemesanan - Hana Memoria</title>
-</head>
-<body style="background-color: #fbf9f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 20px; color: #333333; line-height: 1.5;">
+    <style>
+  body {
+    background-color: #ffffff; /* Warna latar belakang putih agar bersih */
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
 
-    <div style="background-color: #ffffff; max-width: 450px; margin: 0 auto; padding: 32px 24px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #f0ebe1;">
+  .form-container {
+    width: 100%;
+    max-width: 600px; /* Di HP akan penuh, di laptop tidak akan terlalu lebar */
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 30px 20px;
+    box-sizing: border-box;
+  }
+</style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+   <div style="background-color: #ffffff; width: 100%; max-width: 600px; margin: 0 auto; padding: 32px 20px; box-sizing: border-box;">
 
         <div style="text-align: center; margin-bottom: 32px;">
             <h1 style="margin: 0 0 4px 0; font-size: 26px; color: #222222; font-weight: 700; letter-spacing: -0.5px;">Hana Memoria</h1>
@@ -31,20 +48,17 @@
                 <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 12px; color: #444;">Pilih Produk Kenanganmu 🎁</label>
                 
                 <label style="display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; cursor: pointer; padding: 12px; border: 1px solid #e5e0d8; border-radius: 8px; background-color: #fafafa;">
-                    <input type="radio" name="produk" value="Gantungan Kunci Standar" required style="margin-right: 12px; width: 16px; height: 16px; accent-color: #d4b89e;"> Gantungan Kunci (Standar)
+                    <input type="radio" name="produk" value="Gantungan kunci" required style="margin-right: 12px; width: 16px; height: 16px; accent-color: #d4b89e;"> Gantungan Kunci
                 </label>
                 
                 <label style="display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; cursor: pointer; padding: 12px; border: 1px solid #e5e0d8; border-radius: 8px; background-color: #fafafa;">
-                    <input type="radio" name="produk" value="Gantungan Kunci Premium" required style="margin-right: 12px; width: 16px; height: 16px; accent-color: #d4b89e;"> Gantungan Kunci (Premium)
+                    <input type="radio" name="produk" value="Figora" required style="margin-right: 12px; width: 16px; height: 16px; accent-color: #d4b89e;"> Figora
                 </label>
 
-                <label style="display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; cursor: pointer; padding: 12px; border: 1px solid #e5e0d8; border-radius: 8px; background-color: #fafafa;">
-                    <input type="radio" name="produk" value="Figura Standar" required style="margin-right: 12px; width: 16px; height: 16px; accent-color: #d4b89e;"> Figura (Standar)
+                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer; padding: 12px; border: 1px solid #e5e0d8; border-radius: 8px; background-color: #fafafa;">
+                    <input type="radio" name="produk" value="Album" required style="margin-right: 12px; width: 16px; height: 16px; accent-color: #d4b89e;"> Album
                 </label>
-
-                <label style="display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; cursor: pointer; padding: 12px; border: 1px solid #e5e0d8; border-radius: 8px; background-color: #fafafa;">
-                    <input type="radio" name="produk" value="Figura Premium" required style="margin-right: 12px; width: 16px; height: 16px; accent-color: #d4b89e;"> Figura (Premium)
-                </label>
+            </div>
 
                 <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer; padding: 12px; border: 1px solid #e5e0d8; border-radius: 8px; background-color: #fafafa;">
                     <input type="radio" name="produk" value="Album Kenangan" required style="margin-right: 12px; width: 16px; height: 16px; accent-color: #d4b89e;"> Album Kenangan
