@@ -43,7 +43,7 @@
 
             <div style="margin-bottom: 28px;">
                 <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 8px; color: #444;">Nomor WhatsApp 📱</label>
-                <input type="tel" id="whatsapp" name="whatsapp" placeholder="Contoh: 6281234567890" pattern="^628{6,12}$" required style="width: 100%; padding: 14px; border: 1px solid #e5e0d8; border-radius: 8px; box-sizing: border-box; font-size: 14px; background-color: #fafafa; color: #333;">
+                <input type="tel" id="whatsapp" name="whatsapp" placeholder="Contoh: 6281234567890" pattern="^628[0-9]{8,13}$" required style="width: 100%; padding: 14px; border: 1px solid #e5e0d8; border-radius: 8px; box-sizing: border-box; font-size: 14px; background-color: #fafafa; color: #333;">
                 <span style="display: block; font-size: 12px; color: #888888; margin-top: 6px;">Gunakan nomor WhatsApp aktif diawali 628 (tanpa +) ya 😊</span>
             </div>
 
@@ -128,15 +128,20 @@
     </div>
 
     <script>
-        // Validasi Nomor WhatsApp 628
-        document.getElementById('whatsapp').addEventListener('input', function(e) {
-            let value = e.target.value;
-            value = value.replace(/\D/g, ''); // Hapus selain angka
-            if (value.length > 0 && !value.startsWith('6')) {
-                value = '628' + value;
-            }
-            e.target.value = value;
-        });
+        // Validasi Nomor WhatsApp agar otomatis 628
+document.getElementById('whatsapp').addEventListener('blur', function(e) {
+    let value = e.target.value;
+    // Jika user mulai dengan 0, ganti jadi 62
+    if (value.startsWith('0')) {
+        e.target.value = '62' + value.substring(1);
+    }
+    // Jika user mulai dengan 8, tambahkan 62
+    else if (value.startsWith('8')) {
+        e.target.value = '62' + value;
+    }
+});
+        
+
 
         // URL Web App Apps Script milik Anda (Sesuai file penguji)
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxVSZ0Cpp_r40ipdmzeWThF_1NGLG1AsmWwrqqQFS24mTUsGnSE5Vd71_W6tpfdPjXsnA/exec';
