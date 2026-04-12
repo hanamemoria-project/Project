@@ -196,9 +196,11 @@ document.getElementById('whatsapp').addEventListener('blur', function(e) {
                     form.reset();
                 })
                 .catch(error => {
-                    statusTxt.style.color = '#ef4444';
-                    statusTxt.innerText = 'Waduh, ada kendala jaringan: ' + error.message + ' 😥 Coba lagi ya.';
-                })
+    console.error('Error:', error);
+    alert('Terjadi kesalahan: ' + error.message); // Tambahkan alert agar muncul di layar HP
+    statusTxt.innerText = 'Gagal mengirim: ' + error.message;
+})
+
                 .finally(() => {
                     submitBtn.disabled = false;
                     submitBtn.innerText = 'Kirim Pesanan 🚀';
