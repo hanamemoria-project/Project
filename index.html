@@ -1780,13 +1780,28 @@ async function downloadQRCode() {
   if (!idAktif) return;
   showToast('⏳ Membuat QR dengan desain...', '');
 
-  const qrSize = 500;
-  const canvasSize = 700;
-  const padding = 40;
-  const borderRadius = 24;
+  // Canvas layout constants
+  const W           = 800;           // canvas width
+  const H           = 920;           // canvas height — lebih tinggi agar teks bawah tidak tertumpuk
+  const outerPad    = 36;            // jarak card dari tepi canvas
+  const scanMeH     = 72;            // tinggi area SCAN ME di atas
+  const bottomH     = 96;            // tinggi area teks Order ID + brand di bawah
+  const innerGap    = 18;            // gap antara border luar & dalam
+  const qrMargin    = 16;            // gap antara border dalam & QR
 
-  // Load QR image
-  const qrUrl = buildQRUrl(idAktif, qrSize);
+  // Derived
+  const cardX  = outerPad;
+  const cardY  = outerPad;
+  const cardW  = W - outerPad * 2;
+  const cardH  = H - outerPad * 2;
+
+  const qrTop  = cardY + scanMeH + innerGap + qrMargin;
+  const qrBot  = cardY + cardH - bottomH - innerGap - qrMargin;
+  const qrSize = Math.min(cardW - (innerGap + qrMargin) * 2, qrBot - qrTop);
+  const qrX    = cardX + (cardW - qrSize) / 2;
+  const qrY    = qrTop;
+
+  const qrUrl  = buildQRUrl(idAktif, 600);
   const logoUrl = LOGO_URL;
 
   function loadImg(src) {
@@ -1803,63 +1818,85 @@ async function downloadQRCode() {
     const [qrImg, logoImg] = await Promise.all([loadImg(qrUrl), loadImg(logoUrl)]);
 
     const canvas = document.createElement('canvas');
-    canvas.width = canvasSize;
-    canvas.height = canvasSize;
+    canvas.width  = W;
+    canvas.height = H;
     const ctx = canvas.getContext('2d');
 
-    // Background
+    // ── Background card ──
     ctx.fillStyle = '#fdfaf4';
-    roundRect(ctx, 0, 0, canvasSize, canvasSize, borderRadius);
+    roundRect(ctx, cardX, cardY, cardW, cardH, 28);
     ctx.fill();
 
-    // Outer dashed border
-    ctx.setLineDash([10, 6]);
+    // ── Outer dashed border ──
+    ctx.save();
+    ctx.setLineDash([12, 7]);
     ctx.strokeStyle = '#94a3b8';
-    ctx.lineWidth = 2;
-    roundRect(ctx, padding, padding, canvasSize - padding*2, canvasSize - padding*2, 16);
+    ctx.lineWidth = 2.5;
+    roundRect(ctx, cardX + 4, cardY + 4, cardW - 8, cardH - 8, 24);
     ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.restore();
 
-    // Inner solid border (brown)
-    const innerPad = padding + 14;
+    // ── Inner solid brown border ──
+    // Top of inner border starts below SCAN ME area
+    const ib = {
+      x: cardX + innerGap,
+      y: cardY + scanMeH,
+      w: cardW - innerGap * 2,
+      h: cardH - scanMeH - innerGap
+    };
     ctx.strokeStyle = '#b88663';
-    ctx.lineWidth = 3;
-    roundRect(ctx, innerPad, innerPad + 10, canvasSize - innerPad*2, canvasSize - innerPad*2 - 10, 14);
+    ctx.lineWidth = 2.5;
+    roundRect(ctx, ib.x, ib.y, ib.w, ib.h, 14);
     ctx.stroke();
 
-    // "SCAN ME" label on top
+    // ── SCAN ME label (bigger, centered at top) ──
+    const scanText = 'SCAN ME';
+    ctx.font = 'italic 800 38px "Georgia", "DM Serif Display", serif';
+    const scanMetrics = ctx.measureText(scanText);
+    const scanW = scanMetrics.width + 40;
+    const scanCY = cardY + scanMeH / 2 + 2;  // vertical center of SCAN ME zone
+
+    // White pill behind text
     ctx.fillStyle = '#fdfaf4';
-    ctx.fillRect(canvasSize/2 - 70, padding - 2, 140, 30);
-    ctx.fillStyle = '#8a6a53';
-    ctx.font = '500 22px "DM Serif Display", serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('SCAN ME', canvasSize/2, padding + 18);
-
-    // QR code image
-    const qrPad = innerPad + 30;
-    const qrDrawSize = canvasSize - qrPad*2;
-    ctx.drawImage(qrImg, qrPad, qrPad + 10, qrDrawSize, qrDrawSize);
-
-    // Logo overlay in center of QR
-    const logoSize = qrDrawSize * 0.22;
-    const logoX = canvasSize/2 - logoSize/2;
-    const logoY = qrPad + 10 + qrDrawSize/2 - logoSize/2;
-    ctx.fillStyle = '#ffffff';
-    roundRect(ctx, logoX - 6, logoY - 6, logoSize + 12, logoSize + 12, 8);
+    roundRect(ctx, W/2 - scanW/2, scanCY - 26, scanW, 40, 8);
     ctx.fill();
-    ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
 
-    // Order ID text at bottom
+    // Letter-spaced text
     ctx.fillStyle = '#8a6a53';
-    ctx.font = 'bold 20px "DM Sans", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`Order ID: ${idAktif}`, canvasSize/2, canvasSize - padding - 26);
+    ctx.textBaseline = 'middle';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(scanText, W/2, scanCY);
+    ctx.letterSpacing = '0px';
 
-    ctx.fillStyle = '#d8a07c';
-    ctx.font = '16px "DM Sans", sans-serif';
-    ctx.fillText('✨ Hana Memoria ✨', canvasSize/2, canvasSize - padding - 6);
+    // ── QR Code ──
+    ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
 
-    // Download
+    // ── Logo overlay in QR center ──
+    const logoSize = qrSize * 0.20;
+    const logoX    = qrX + qrSize / 2 - logoSize / 2;
+    const logoY2   = qrY + qrSize / 2 - logoSize / 2;
+    ctx.fillStyle = '#ffffff';
+    roundRect(ctx, logoX - 8, logoY2 - 8, logoSize + 16, logoSize + 16, 10);
+    ctx.fill();
+    ctx.drawImage(logoImg, logoX, logoY2, logoSize, logoSize);
+
+    // ── Bottom text zone ──
+    const textZoneY = qrY + qrSize + qrMargin + innerGap;
+
+    // Order ID
+    ctx.fillStyle = '#8a6a53';
+    ctx.font = 'bold 28px "DM Sans", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(`Order ID: ${idAktif}`, W/2, textZoneY + 36);
+
+    // Brand tagline
+    ctx.fillStyle = '#c9a84c';
+    ctx.font = '22px "DM Sans", Arial, sans-serif';
+    ctx.fillText('✨  Hana Memoria  ✨', W/2, textZoneY + 68);
+
+    // ── Download ──
     canvas.toBlob(blob => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -1867,6 +1904,7 @@ async function downloadQRCode() {
       a.click();
       showToast('✅ QR berhasil didownload!', 'success');
     }, 'image/png');
+
   } catch(e) {
     showToast('⚠️ Gagal membuat QR, coba lagi', 'error');
   }
